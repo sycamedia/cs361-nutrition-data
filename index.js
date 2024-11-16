@@ -11,7 +11,7 @@ const APIkey = ""
 
 app.use(express.json());    // Parses JSON request bodies
 
-
+// Request to API
 const APIsearch = (searchQuery) => {
     return axios.get('https://api.nal.usda.gov/fdc/v1/foods/list',
         {
@@ -25,10 +25,32 @@ const APIsearch = (searchQuery) => {
     );
 }
 
+// Receive & respond to request from client
 app.post('/search', (req, res) => {
     const { searchQuery } = req.body;
 
     APIsearch(searchQuery).then(APIresponse => {
+        console.log(APIresponse.data);
+
+        res.status(201).json(APIresponse.data);
+    })
+});
+
+// Request to API
+const APIselect = (selectionID) => {
+    return axios.get(`https://api.nal.usda.gov/fdc/v1/food/${selectionID}`,
+    {
+        params: {
+            api_key: APIkey
+        }
+    })
+}
+
+// Receive & respond to request from client
+app.post('/select', (req, res) => {
+    const { selectionID } = req.body;
+
+    APIselect(selectionID).then(APIresponse => {
         console.log(APIresponse.data);
 
         res.status(201).json(APIresponse.data);

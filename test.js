@@ -4,6 +4,7 @@ It uses CLI commands to send the client requests.
 */
 
 const axios = require('axios');
+const e = require('express');
 const readline = require('readline')
 let searchResults;
 
@@ -24,7 +25,7 @@ const sendSearch = (searchQuery) => {
 
 const sendSelection = (selectionID) => {
     return server({
-        method: 'get',
+        method: 'post',
         url: '/select',
         data: {
             selectionID: selectionID
@@ -37,38 +38,44 @@ const prompter = readline.createInterface({
     output: process.stdout
 })
 
-function promptForQuery(callback) {prompter.question('Please enter a food to search: ', (searchQuery) => {
-    console.log(`Results for "${searchQuery}":`)
-    sendSearch(searchQuery).then(response => {
-        
-        let resultIndex = 1
-        searchResults = response.data.map(item => ({
-            index: resultIndex++,
-            fdcId: item.fdcId,
-            description: item.description
-        }))
+function promptForQuery(callback) {
+    prompter.question('Please enter a food to search: ', (searchQuery) => {
+        console.log(`Results for "${searchQuery}":`)
+        sendSearch(searchQuery).then(response => {
 
-        searchResults.forEach(result => {
-            console.log(`${result.index}. ${result.description}`)
-        });
-        callback();
+            let resultIndex = 1
+            searchResults = response.data.map(item => ({
+                index: resultIndex++,
+                fdcId: item.fdcId,
+                description: item.description
+            }))
+
+            searchResults.forEach(result => {
+                console.log(`${result.index}. ${result.description}`)
+            });
+            callback();
+        })
     })
-    
-})}
+}
 
-function promptForSelection(){prompter.question('Type the number result or "C" to cancel search: ', (input) => {
-    selectionID = searchResults.find(result => {
-        return result.index == input}).fdcId
+function promptForSelection() {
+    prompter.question('Type the number result or "C" to cancel search: ', (input) => {
+        selected = searchResults.find(result => {
+            return result.index == input
+        })
 
-        console.log(selectionID)
-        
-    sendSelection(selectionID).then(response => {
-        console.log(response.data)
-        
+        if (selected) {
+            sendSelection(selected.fdcId).then(response => {
+                console.log(response.data)
+            })
+        }
+        else if (input == "C") {
+            console.log("Cancelled search")
+        }
+        else {
+            console.log("Invalid input")
+        }
     })
-    
-})}
+}
 
 promptForQuery(promptForSelection);
-
-  // do a /select here
