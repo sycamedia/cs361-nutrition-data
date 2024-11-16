@@ -13,11 +13,13 @@ app.use(express.json());    // Parses JSON request bodies
 
 
 const APIsearch = (searchQuery) => {
-    return axios.get('https://api.nal.usda.gov/fdc/v1/foods/search',
+    return axios.get('https://api.nal.usda.gov/fdc/v1/foods/list',
         {
             params: {
                 api_key: APIkey,
-                query: searchQuery
+                query: searchQuery,
+                dataType: "Foundation",
+                pageSize: 10
             }
         }
     );
@@ -26,12 +28,10 @@ const APIsearch = (searchQuery) => {
 app.post('/search', (req, res) => {
     const { searchQuery } = req.body;
 
-    APIsearch(searchQuery).then(response => {
-        console.log(response.data); // Handle the response data
+    APIsearch(searchQuery).then(APIresponse => {
+        console.log(APIresponse.data);
 
-        res.status(201).json({
-            message: `Processed query: ${searchQuery}`
-        });
+        res.status(201).json(APIresponse.data);
     })
 });
 
