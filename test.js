@@ -15,39 +15,60 @@ const server = axios.create({
 const sendSearch = (searchQuery) => {
     return server({
         method: 'post',
-        url: '/search/',
+        url: '/search',
         data: {
             searchQuery: searchQuery
         }
     });
 }
 
-const searchPrompt = readline.createInterface({
+const sendSelection = (selectionID) => {
+    return server({
+        method: 'get',
+        url: '/select',
+        data: {
+            selectionID: selectionID
+        }
+    });
+}
+
+const prompter = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 })
 
-const selectPrompt = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-searchPrompt.question('Please enter a food to search: ', (searchQuery) => {
+function promptForQuery(callback) {prompter.question('Please enter a food to search: ', (searchQuery) => {
     console.log(`Results for "${searchQuery}":`)
     sendSearch(searchQuery).then(response => {
         
         let resultIndex = 1
         searchResults = response.data.map(item => ({
             index: resultIndex++,
+            fdcId: item.fdcId,
             description: item.description
         }))
 
         searchResults.forEach(result => {
             console.log(`${result.index}. ${result.description}`)
         });
+        callback();
     })
-})
+    
+})}
 
-selectPrompt.question('Type the number result or "Cancel" to cancel search')
+function promptForSelection(){prompter.question('Type the number result or "C" to cancel search: ', (input) => {
+    selectionID = searchResults.find(result => {
+        return result.index == input}).fdcId
+
+        console.log(selectionID)
+        
+    sendSelection(selectionID).then(response => {
+        console.log(response.data)
+        
+    })
+    
+})}
+
+promptForQuery(promptForSelection);
 
   // do a /select here
