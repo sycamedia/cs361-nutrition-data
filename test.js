@@ -4,7 +4,6 @@ It uses CLI commands to send the client requests.
 */
 
 const axios = require('axios');
-const e = require('express');
 const readline = require('readline')
 let searchResults;
 
@@ -59,7 +58,7 @@ function promptForQuery(callback) {
 }
 
 function promptForSelection() {
-    prompter.question('Type the number result or "C" to cancel search: ', (input) => {
+    prompter.question('Type the number of the result you want to see, or "C" to cancel search: ', (input) => {
         selected = searchResults.find(result => {
             return result.index == input
         })
@@ -67,13 +66,16 @@ function promptForSelection() {
         if (selected) {
             sendSelection(selected.fdcId).then(response => {
                 console.log(response.data)
+                promptForQuery(promptForSelection);
             })
         }
         else if (input == "C") {
             console.log("Cancelled search")
+            promptForQuery(promptForSelection);
         }
         else {
             console.log("Invalid input")
+            promptForSelection()
         }
     })
 }
