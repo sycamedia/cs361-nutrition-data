@@ -69,12 +69,13 @@ app.post('/search', (req, res) => {
 });
 
 // Request to API
-const APIselect = (selectionID) => {
+const APIselect = (selectionID, nutrients) => {
     return axios.get(`https://api.nal.usda.gov/fdc/v1/food/${selectionID}`,
         {
             params: {
                 api_key: APIkey,
-                format: "abridged"
+                format: "abridged",
+                nutrients: nutrients
             }
         }
     )
@@ -82,8 +83,8 @@ const APIselect = (selectionID) => {
 
 // Receive & respond to request from client
 app.post('/select', (req, res) => {
-    const { selectionID } = req.body;
-    APIselect(selectionID).then(APIresponse => {
+    const { selectionID, nutrients} = req.body;
+    APIselect(selectionID, nutrients).then(APIresponse => {
         console.log(APIresponse.data);
         res.status(201).json(APIresponse.data);
     }).catch(error => {
