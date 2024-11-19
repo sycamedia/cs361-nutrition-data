@@ -22,7 +22,7 @@ const app = express()
 const port = 3000
 const APIkey = "" // add your API key here
 
-app.use(express.json());    // Parses JSON request bodies
+app.use(express.json());
 
 // List request to API
 const APIsearch = (searchQuery) => {
