@@ -11,7 +11,7 @@ const server = axios.create({
     baseURL: 'http://localhost:3000'
 });
 
-sendSearch = (searchQuery) => {
+const sendSearch = (searchQuery) => {
     return server({
         method: 'post',
         url: '/search',
@@ -21,7 +21,7 @@ sendSearch = (searchQuery) => {
     });
 }
 
-const sendSelection = (selectionID, nutrients) => {
+const sendSelection = (selectionID, nutrients = "") => {
     return server({
         method: 'post',
         url: '/select',
@@ -37,8 +37,8 @@ sendSearch("peanuts").then(response => {
     console.log(response.data)
 })
 
-// Sample response with fdcId for 'Rose-apples, raw'
-// Showing protein, fats, and carbs
-sendSelection(168171, "203,204,205").then(response => {
+// Sample response with fdcId for 'Peanuts, raw'
+// Showing protein, fat, and carbs
+sendSelection(2515376, "203,204,205").then(response => {
     console.log(response.data)
 })
