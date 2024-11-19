@@ -108,7 +108,7 @@ function promptForSelection() {
         })
 
         // Hard-coded nutrient filters for the sake of demonstration
-        let sampleNutrients = "203,204,205" 
+        let sampleNutrients = "203,204,205"
 
         if (selected) {
             sendSelection(selected.fdcId, sampleNutrients).then(response => {
