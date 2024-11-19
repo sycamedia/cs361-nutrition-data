@@ -24,7 +24,7 @@ const APIkey = "" // add your API key here
 
 app.use(express.json());    // Parses JSON request bodies
 
-// Request to API
+// List request to API
 const APIsearch = (searchQuery) => {
     return axios.get('https://api.nal.usda.gov/fdc/v1/foods/list',
         {
@@ -38,37 +38,27 @@ const APIsearch = (searchQuery) => {
     );
 }
 
-// Receive & respond to request from client
+// Receive & respond to search request from client
 app.post('/search', (req, res) => {
     const { searchQuery } = req.body;
     APIsearch(searchQuery).then(APIresponse => {
-        if (APIresponse.status == 404) {
-            console.log("caught a bad one")
-            res.status(404).json(`No results for ${searchQuery}`);
-        }
-        else {
-            console.log("Response: ", APIresponse.data);
-
+            console.log("Search results: ", APIresponse.data);
             res.status(201).json(APIresponse.data);
-        }
     }).catch(function (error) {
         if (error.response) {
-            // Request was made; server responded with a status code beyond 2xx
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
         } else if (error.request) {
-            // The request was made but no response was received
             console.log(error.request);
         } else {
-            // Something happened in setting up the request that triggered an Error
             console.log('Error', error.message);
         }
         console.log(error.config);
     });
 });
 
-// Request to API
+// Food item request to API
 const APIselect = (selectionID, nutrients = "") => {
     return axios.get(`https://api.nal.usda.gov/fdc/v1/food/${selectionID}`,
         {
@@ -81,11 +71,11 @@ const APIselect = (selectionID, nutrients = "") => {
     )
 }
 
-// Receive & respond to request from client
+// Receive & respond to selection request from client
 app.post('/select', (req, res) => {
     const { selectionID, nutrients} = req.body;
     APIselect(selectionID, nutrients).then(APIresponse => {
-        console.log(APIresponse.data);
+        console.log("Food item: ", APIresponse.data);
         res.status(201).json(APIresponse.data);
     }).catch(error => {
         if (error.response) {
