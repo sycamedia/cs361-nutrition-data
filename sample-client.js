@@ -56,7 +56,7 @@ function promptForQuery(callback) {
                     description: item.description
                 }))
 
-                console.log(`Nutrition data for "${searchQuery}":`)
+                console.log(`Search results for "${searchQuery}":`)
                 searchResults.forEach(result => {
                     console.log(`${result.index}. ${result.description}`)
                 });
@@ -95,7 +95,7 @@ function displayNutrients(item) {
         unit: item.unitName
     }))
 
-    console.log(`Results for "${item.description}":`)
+    console.log(`Nutrition data for "${item.description}":`)
     nutrientResults.forEach(result => {
         console.log(`${result.name}: ${result.amount} ${result.unit}`)
     });
