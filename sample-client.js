@@ -2,7 +2,8 @@
 Sycamore Dennis
 18 November 2024
 
-This is a sample CLI client to demonstrate the microservice function.
+This is a sample CLI client to demonstrate the microservice function
+in an interactive context.
 
 Error handling for requests copied from "Axios: Handling Errors,"
 accessed 18 Nov 2024 from https://axios-http.com/docs/handling_errors
@@ -10,6 +11,7 @@ accessed 18 Nov 2024 from https://axios-http.com/docs/handling_errors
 
 const axios = require('axios');
 const readline = require('readline');
+
 let searchResults;
 
 
@@ -27,12 +29,13 @@ const sendSearch = (searchQuery) => {
     });
 }
 
-const sendSelection = (selectionID) => {
+const sendSelection = (selectionID, nutrients) => {
     return server({
         method: 'post',
         url: '/select',
         data: {
-            selectionID: selectionID
+            selectionID: selectionID,
+            nutrients: nutrients
         }
     });
 }
@@ -53,7 +56,7 @@ function promptForQuery(callback) {
                     description: item.description
                 }))
 
-                console.log(`Results for "${searchQuery}":`)
+                console.log(`Nutrition data for "${searchQuery}":`)
                 searchResults.forEach(result => {
                     console.log(`${result.index}. ${result.description}`)
                 });
@@ -83,15 +86,33 @@ function promptForQuery(callback) {
     })
 }
 
+function displayNutrients(item) {
+    let nutrientResults = []
+
+    nutrientResults = item.foodNutrients.map(item => ({
+        name: item.name,
+        amount: item.amount,
+        unit: item.unitName
+    }))
+
+    console.log(`Results for "${item.description}":`)
+    nutrientResults.forEach(result => {
+        console.log(`${result.name}: ${result.amount} ${result.unit}`)
+    });
+}
+
 function promptForSelection() {
     prompter.question('Type the number of the result you want to see, or "C" to cancel search: ', (input) => {
         selected = searchResults.find(result => {
             return result.index == input
         })
 
+        // Hard-coded nutrient filters for the sake of demonstration
+        let sampleNutrients = "203,204,205" 
+
         if (selected) {
-            sendSelection(selected.fdcId).then(response => {
-                console.log(response.data)
+            sendSelection(selected.fdcId, sampleNutrients).then(response => {
+                displayNutrients(response.data)
                 promptForQuery(promptForSelection);
             }).catch(error => {
                 if (error.response) {
