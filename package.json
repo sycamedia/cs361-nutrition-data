@@ -2,9 +2,9 @@
   "name": "cs361-nutrition-data",
   "version": "1.0.0",
   "description": "Microservice that interfaces with the USDA FoodData Central API",
-  "main": "server.js",
+  "main": "microservice.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node microservice.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sycamore Dennis",
